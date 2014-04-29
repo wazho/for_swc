@@ -1,0 +1,399 @@
+<!DOCTYPE  html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Stardust Script</title>
+
+	<link href="css/pepper-grinder/jquery-ui-1.10.4.custom.css" rel="stylesheet">
+	<script src="src/jquery-1.10.2.js"></script>
+	<script src="src/jquery-ui-1.10.4.custom.js"></script>
+
+	<script src="src/createjs-2013.12.12.min.js"></script>
+	<script src="src/RPG/global_function.js"></script>
+	<script src="src/RPG/sprite_choose.js"></script>
+	<script src="src/RPG/map.js"></script>
+	<script src="src/RPG/npc.js"></script>
+	<script src="src/RPG/character.js"></script>
+	<script src="src/RPG/monster.js"></script>
+	<script src="src/RPG/framework.js"></script>
+
+	<script>
+		var stage ;
+		function init() {
+			stage = new createjs.Stage( "myCanvas" ) ;
+    		document.body.style.cursor = "url('pic/cursor/normal_select.cur'), default" ;
+			// 定義畫布長寬
+			var canvas_len = 900, canvas_hei = 550 ;
+			// 建立地圖框架
+			var mapcontrol = new Main_Map( "01", canvas_len, canvas_hei, false ) ;
+			// 建立遊戲框架
+			var framework = new Main_Framework( canvas_len, canvas_hei ) ;
+			// 建立角色物件
+			var baphomet = new Character( mapcontrol, "baphomet", 175, 55, 1.00, 9, 3, "front" ) ;
+			var farmiliar_01 = new NPC( mapcontrol, "farmiliar_01", 19, 1, 6, "monster", "farmiliar", "#dialog_01" ) ;
+			var farmiliar_02 = new NPC( mapcontrol, "farmiliar_02", 19, 1, 6, "monster", "farmiliar", "#dialog_02" ) ;
+			var farmiliar_03 = new NPC( mapcontrol, "farmiliar_03", 19, 1, 6, "monster", "farmiliar", "#dialog_03" ) ;
+
+			baphomet.OnLifeModify( -100, -40 ) ;
+			createjs.Tween.get( baphomet.container, { loop: false } )
+								.wait( 1000 ).call( function() { baphomet.OnTalk( "哈囉, 昇瑋老師^^" ) ; } )
+								.wait( 1000 ).call( function() { baphomet.OnWalk( 4, 4 ) ; } )
+								.wait( 1500 ).call( function() { baphomet.OnWalk( 5, 4 ) ; } )
+								.wait( 1000 ).call( function() { baphomet.OnTalk( "這裡簡單的介紹了我求學期間寫過的程式," ) ; } )
+								.wait(    0 ).call( function() { farmiliar_01.OnWalk( 9, 3 ) ; } )
+								.wait(  500 ).call( function() { farmiliar_02.OnWalk( 11, 3 ) ; } )
+								.wait(  500 ).call( function() { farmiliar_03.OnWalk( 13, 3 ) ; } )
+								.wait( 2500 ).call( function() { baphomet.OnTalk( "以及我的在校成績。" ) ; } )
+								.wait( 3500 ).call( function() { farmiliar_01.OnTalk( "我負責告訴你成績, 吱吱。" ) ; } )
+								.wait(    0 ).call( function() { farmiliar_01.OnWalk( 12, 6 ) ; } )
+								.wait( 3500 ).call( function() { farmiliar_02.OnTalk( "吱, 我來介紹程式、專題。" ) ; } )
+								.wait(    0 ).call( function() { farmiliar_02.OnWalk( 14, 4 ) ; } )
+								.wait( 3500 ).call( function() { farmiliar_03.OnTalk( "吱吱... 我沒事情做..." ) ; } )
+								.wait(    0 ).call( function() { farmiliar_03.OnWalk( 16, 2 ) ; } )
+								.wait( 1000 ).call( function() { baphomet.OnTalk( "走到該蝙蝠附近, 就可以觀看囉。（移動滑鼠）" ) ; } )
+
+								;
+
+			// 地圖背景匯入
+			stage.addChild( mapcontrol.backgorond ) ;
+			// 地圖景效物件匯入(後端)
+			stage.addChild( mapcontrol.container_back ) ;
+			// 主要角色匯入
+			stage.addChild( baphomet.container ) ;
+			stage.addChild( farmiliar_01.container, farmiliar_02.container, farmiliar_03.container ) ;
+			// 地圖景效物件匯入(前端)
+			stage.addChild( mapcontrol.container_front ) ;
+			// 遊戲主框架匯入
+		    stage.addChild( framework.container ) ;
+
+		    // jQuery Setting.
+		    $( '#dialog_01' ).dialog({
+				autoOpen: false,
+				width: 400,
+				height: 300,
+				modal: true,
+				show: {
+					effect: "blind",
+					duration: 1000
+				},
+				hide: {
+					effect: "blind",
+					duration: 500
+				},
+				buttons: {
+					"我要觀看": function() {
+						var that = this ;
+						createjs.Tween.get( baphomet.container, { loop: false } )
+											.wait(    0 ).call( function() { $( that ).dialog( "close" ) } )
+											.wait(    0 ).call( function() { farmiliar_01.OnTalk( "吱吱, 我知道了, 等我一下。" ) ; } )
+											.wait( 1000 ).call( function() { $( "#dialog_04" ).dialog( "open" ) ; } ) ;
+					},
+					"取消": function() {
+						$( this ).dialog( "close" ) ;
+					}
+				}
+			}) ;
+		    // jQuery Setting.
+		    $( '#dialog_02' ).dialog({
+				autoOpen: false,
+				width: 400,
+				height: 300,
+				modal: true,
+				show: {
+					effect: "blind",
+					duration: 1000
+				},
+				hide: {
+					effect: "blind",
+					duration: 500
+				},
+				buttons: {
+					"我要觀看": function() {
+						var that = this ;
+						createjs.Tween.get( baphomet.container, { loop: false } )
+											.wait(    0 ).call( function() { $( that ).dialog( "close" ) } )
+											.wait(    0 ).call( function() { farmiliar_02.OnTalk( "吱吱, 請稍等片刻。" ) ; } )
+											.wait( 1000 ).call( function() { $( "#dialog_05" ).dialog( "open" ) ; } ) ;
+					},
+					"取消": function() {
+						$( this ).dialog( "close" ) ;
+					}
+				}
+			}) ;
+		    // jQuery Setting.
+		    $( '#dialog_03' ).dialog({
+				autoOpen: false,
+				width: 400,
+				height: 300,
+				modal: true,
+				show: {
+					effect: "blind",
+					duration: 1000
+				},
+				hide: {
+					effect: "blind",
+					duration: 500
+				},
+				buttons: {
+					"我要觀看": function() {
+						createjs.Tween.get( baphomet.container, { loop: false } )
+											.wait( 500 ).call( function() { farmiliar_03.OnTalk( "吱... 吱!! 講到這就有氣, 吱吱。" ) ; } ) ;
+						$( this ).dialog( "close" ) ;
+					},
+					"取消": function() {
+						$( this ).dialog( "close" ) ;
+					}
+				}
+			}) ;
+		    // jQuery Setting.
+		    $( '#dialog_04' ).dialog({
+				autoOpen: false,
+				width: 550,
+				height: 530,
+				modal: true,
+				show: {
+					effect: "blind",
+					duration: 1000
+				},
+				hide: {
+					effect: "blind",
+					duration: 500
+				}
+			}) ;
+		    // jQuery Setting.
+		    $( '#dialog_05' ).dialog({
+				autoOpen: false,
+				width: 650,
+				height: 550,
+				modal: true,
+				show: {
+					effect: "blind",
+					duration: 1000
+				},
+				hide: {
+					effect: "blind",
+					duration: 500
+				}
+			}) ;
+
+			$( "#accordion, #accordion2" ).accordion({
+				heightStyle: "fill"
+			});
+			$( "#accordion-resizer" ).resizable({
+				resize: function() {
+					$( "#accordion" ).accordion( "refresh" );
+				}
+			});
+			$( "#accordion-resizer2" ).resizable({
+				resize: function() {
+					$( "#accordion2" ).accordion( "refresh" );
+				}
+			});
+
+		} // init()
+	</script>
+	<style>
+		#accordion-resizer2 {
+			padding: 10px;
+			width: 500px;
+			height: 370px;
+		}
+		#accordion-resizer {
+			padding: 10px;
+			width: 600px;
+			height: 360px;
+		}
+	</style>
+</head>
+
+<body onload="init()" bgcolor="#ACA">
+
+	<a href="https://github.com/grass0916/Stardust-Script"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/82b228a3648bf44fc1163ef44c62fcc60081495e/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f7265645f6161303030302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png"></a>
+
+	<canvas id="myCanvas" width="900" height="550" style="position: absolute; top:50%; left:50%; margin-left: -450px; margin-top: -285px; border-radius: 10px">
+		Alternative Content
+	</canvas>
+
+	<div id="dialog_01" title="吸血蝙蝠小弟" number=1>
+		<p>你要觀看鮭魚的在學成績記錄嗎？</p>
+	</div>
+
+	<div id="dialog_02" title="吸血蝙蝠二哥">
+		<p>你要觀看鮭魚的程式、專題記錄嗎？</p>
+	</div>
+
+	<div id="dialog_03" title="吸血蝙蝠大哥">
+		<p>吱吱，服貿你怎麼看？</p>
+	</div>
+
+	<div id="dialog_04" title="吸血蝙蝠小弟">
+		<div id="accordion-resizer2" class="ui-widget-content">
+			<div id="accordion2">
+				<h3>各科分數分布</h3>
+				<div>
+					<img src="score01.png" width=430>
+				</div>
+				<h3>平均成績曲線</h3>
+				<div>
+					<img src="score02.png" width=430>
+				</div>
+				<h3>專業科目成績</h3>
+				<div>
+					<table border="0">
+					<tbody>
+						<tr>
+							<td><font color="red">一上必修　　</font></td>
+							<td><font color="red">計算機概論(一)</font></td>
+							<td><font color="red">81</font></td>
+						</tr>
+						<tr>
+							<td><font color="orange">一下必修</font></td>
+							<td><font color="orange">計算機概論(二)</font></td>
+							<td><font color="orange">98</font></td>
+						</tr>
+						<tr>
+							<td><font color="green">二上必修</font></td>
+							<td><font color="green">組合語言與嵌入式系統　</font></td>
+							<td><font color="green">78</font></td>
+						</tr>
+						<tr>
+							<td><font color="green">二上必修</font></td>
+							<td><font color="green">資料結構</font></td>
+							<td><font color="green">75</font></td>
+						</tr>
+						<tr>
+							<td><font color="blue">二下必修</font></td>
+							<td><font color="blue">資料結構與演算法</font></td>
+							<td><font color="blue">73</font></td>
+						</tr>
+						<tr>
+							<td><font color="blue">二下必修</font></td>
+							<td><font color="blue">物件導向程式設計</font></td>
+							<td><font color="blue">80</font></td>
+						</tr>
+						<tr>
+							<td><font color="blue">二下必修</font></td>
+							<td><font color="blue">程式語言</font></td>
+							<td><font color="blue">86</font></td>
+						</tr>
+						<tr>
+							<td><font color="blue">二下選修</font></td>
+							<td><font color="blue">網路安全概論與實務</font></td>
+							<td><font color="blue">75</font></td>
+						</tr>
+						<tr>
+							<td><font color="purple">三上必修</font></td>
+							<td><font color="purple">計算機組織</font></td>
+							<td><font color="purple">84</font></td>
+						</tr>
+						<tr>
+							<td><font color="purple">三上必修</font></td>
+							<td><font color="purple">系統程式</font></td>
+							<td><font color="purple">98</font></td>
+						</tr>
+						<tr>
+							<td><font color="purple">三上選修</font></td>
+							<td><font color="purple">資訊與網路安全</font></td>
+							<td><font color="purple">92</font></td>
+						</tr>
+						<tr>
+							<td><font color="purple">三上選修</td>
+							<td><font color="purple">資訊檢索導論</td>
+							<td><font color="purple">83</td>
+						</tr>
+					</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div id="dialog_05" title="吸血蝙蝠二哥">
+		<div id="accordion-resizer" class="ui-widget-content">
+			<div id="accordion">
+				<h3>大學一年級</h3>
+				<div>
+					<li>[計概課程 使用C]</li>
+					<li>　　橋牌</li>
+					<li>[計概課程 使用Java]</li>
+					<li>　　橋牌</li>
+				</div>
+				<h3>大學二年級</h3>
+				<div>
+					<li>[專題門檻 使用Java]</li>
+					<li>　　五子棋含連線功能與 AI 對戰</li>
+					<li>[DS課程 使用C]</li>
+					<li>　　Josephus Problem</li>
+					<li>[DS課程 使用C]</li>
+					<li>　　Traveling Salesman Problem</li>
+					<li>[AL課程 使用Assembly]</li>
+					<li>　　電子賀卡、蜂鳴器音樂盒</li>
+					<li>[PL課程 使用C++]</li>
+					<li>　　LISP 直譯器實作 (首支大型program, 1600+Lines)</li>
+				</div>
+				<h3>大學三年級</h3>
+				<div>
+					<li>[NS課程 使用C++]</li>
+					<li>　　3DES 加密演算法 with socket</li>
+					<li>[CO課程 使用Verilog]</li>
+					<li>　　模擬 CPU 實作 (Pipelined MISP Processor)</li>
+					<li>[SP課程 使用C++]</li>
+					<li>　　x86 組譯器實作</li>
+					<li>[Algorithm課程 使用C++]</li>
+					<li>　　Missionaries and cannibals problem</li>
+					<li>[IR課程 使用R]</li>
+					<li>　　Pokemon database 網路爬蟲, 分類演算法</li>
+					<li>[OS課程 使用R]</li>
+					<li>　　氣泡排序於Multithreading與Parallel computing分析</li>
+				</div>
+				<h3>進行專案</h3>
+				<div>
+					<li>iCampus-校園行動歷險</li>
+					<li>　　使用語言：Android、R、Hadoop</li>
+					<li>　　參與人員：4人團隊 - 校內同學</li>
+					<li>　　專案時程：since 2014.01 ~</li>
+					<li>　　模擬 Google Ingress 之計畫所設計的校園版，為一結合校園社交功能的擴增實境（Augmented Reality）與地理位置服務（Location-Based Service）應用。為了鼓勵學生廣泛探索校園環境並促進附近商家的買氣，用戶必須手持智慧型裝置歷訪校園各角落完成任務以獲取點數，隨後即可利用點數在附近商家消費時換取折扣。站在開發者的角度來看，本程式將會記錄用戶 GPS 及網路定位連線資訊，藉此分析校園人潮流動的變化趨勢，進而提供視覺化（visualized）及客製化（customized）的資訊推薦服務。</li>
+					</br>
+					<li>[g0v零時政府] 遊行online、媒體戰</li>
+					<li>　　使用語言：html5</li>
+					<li>　　參與人員：3+3人團隊 - 台大CCSP旁聽</li>
+					<li>　　專案時程：since 2014.03 ~</li>
+					<li>　　社運正夯，想參加但是沒有時間怎麼辦？只要利用行動裝置即可在虛擬世界中的各大據點（如總統府、立法院…）進行溫柔的推擠抗議、和平的靜坐抗議。</li>
+					<li>　　媒體戰藉由遊戲化、圖像化的互動過程，讓使用者認識自己的資訊來源，以及自己散佈的資訊，又是傳遞給了怎麼樣的人，又造成怎麼樣的影響力。</li>
+					</br>
+					<li>[個人專題] RO 開心農場 (放棄使用)</li>
+					<li>　　使用語言：RO script language (rAthena)</li>
+					<li>　　專案時程：since 2013.04 ~ 2013.10</li>
+					<li>　　使用 rAthena 模擬器提供的 script，構築在 RO 的環境上所做的開心農場，能夠飼養動物、成長、突變、死亡，耕種植物、成長、收成。起初是因為可以減少不少的美工問題，但後來涉及版權問題、未來擴充性不高，雖然完成度已達 95% 終將此計畫冷凍。 公開版的更新日誌：https://sites.google.com/site/grasscomputernote/now-project/ro_pasture</li>
+					</br>
+					<li>[個人專題 第一階段] 2D Game Engine Script (就是現在網頁)</li>
+					<li>　　使用語言：Javascript (CreateJS)</li>
+					<li>　　專案時程：since 2014.04 ~</li>
+					<li>　　長年累積對 RO 伺服器模擬器的認知，利用 javascript 的複合型引擎 'CreateJS' 打造出只有一些程式邏輯用戶也能夠輕易使用 script 創建出自己 RPG 類型遊戲之引擎。前顯易懂且直覺的指令就能夠生成遊戲物件：</li>
+					<li>　new Character( x, y, hp, sp ... )</li>
+					<li>　　創造遊戲角色，進行移動、攻擊、施放技能...。</li>
+					<li>　new Monster( map, x, y ... )</li>
+					<li>　　創造怪物角色，自定攻擊玩家的模式，路徑。</li>
+					<li>　new NPC( map, x, y, event ... )</li>
+					<li>　　創造非玩家控制角色，與其對話與其他功能。</li>
+					<li>　....　諸如此類的語法。</li>
+					<li>　　這其實是方便自己在未來進行其他開發（第二階段的前置，預計用此從新打造出網頁牧場）能夠得心應手，可以說是寫給自己的 API，由於剛開始自學 JS 仍有許多要克服的難處。 上週已放到 Github 上：https://github.com/grass0916/Stardust-Script</li>
+					</br>
+					<li>[個人專題 第二階段] 拍賣場網站系統</li>
+					<li>　　使用語言：html5、以 jQuery、MySQL 為主</li>
+					<li>　　專案時程：since 2013.08 ~</li>
+					<li>　　由於對網頁製作的語言極其眾多，以及前端、後端的處理方式與協定不甚熟悉，在前期一直呈現迂迴的狀態，直到最近幾個月到台大旁聽 CCSP 的課程，終於有人能夠幫我起了個正確的方向好讓我在未來自學的路上不再迷惘。這部分將會實作出拍賣場網站，針對的使用者是第一階段所做出的牧場系統，玩家可以在此拍賣場上進行道具交易。</li>
+					</br>
+					<li>[個人專題 第三階段] Data collecting and analysis</li>
+					<li>　　使用語言：R</li>
+					<li>　　這部分需等待前面部分完成，之後再與指導老師討論。主要方向就是承接第二階段的拍賣場，紀錄交易紀錄（購買物品、購買時機）、遊戲上線習慣（上線時間、 活動作息）... 等等的 raw data 將逐一記錄，並在後續利用這些原始資料看看能否得到一些有意義的玩家資訊。</li>
+					</br></br>
+					<li>～ 然後其實我還有偷偷在跟一些 g0v 專案 (觀摩中)</li>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
